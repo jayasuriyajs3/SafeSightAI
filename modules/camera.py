@@ -1,3 +1,4 @@
+# pyrefly: ignore [missing-import]
 import cv2
 import logging
 
@@ -18,7 +19,10 @@ class WideAngleCamera:
 
     def open(self):
         logger.info(f"Opening camera {self.index} with resolution {self.width}x{self.height}...")
-        self.cap = cv2.VideoCapture(1)
+        self.cap = cv2.VideoCapture(self.index, cv2.CAP_DSHOW)
+        if not self.cap.isOpened():
+            logger.info(f"Retrying camera {self.index} with default backend...")
+            self.cap = cv2.VideoCapture(self.index)
         if not self.cap.isOpened():
             logger.error(f"Failed to open camera index {self.index}.")
             self.is_connected = False
